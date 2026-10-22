@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nature's Palette — Protect Our Planet</title>
+<!-- Chart.js for Admin Analytics -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#159957;--dark:#073b2a;--light:#eafff2;--lime:#b7f36b;--blue:#39a9db;--art:#ff9a9e;--whatsapp:#25D366}
+
+/* --- Nature Cursor Theme --- */
+body, html {
+  font-family:Arial,Helvetica,sans-serif;background:#f4fff7;color:#143b2b;line-height:1.6;overflow-x:hidden;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' style='font-size:24px'><text y='24'>🍃</text></svg>") 0 0, auto;
+}
+button, a, .choice, .entry-toggle, .close-btn, select, .role-tab {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' style='font-size:24px'><text y='24'>🌱</text></svg>") 12 12, pointer !important;
+}
+
+/* --- Cursor Trail Effect --- */
+.cursor-trail {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  font-size: 16px;
+  animation: trailFade ease-out forwards;
+}
+@keyframes trailFade {
+  0% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); }
+  100% { opacity: 0; transform: scale(0.3) translateY(30px) rotate(60deg); }
+}
+
+/* --- Cinematic Entry Background & Orbs --- */
+#entry-page {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  background: #02120c;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; color: white;
+  perspective: 1000px;
+  overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px); opacity: 0.5;
+  animation: orbDrift 15s ease-in-out infinite alternate;
+  z-index: 1; pointer-events: none;
+}
+.orb-1 { width: 45vw; height: 45vw; background: #0a4f38; top: -10%; left: -10%; }
+.orb-2 { width: 35vw; height: 35vw; background: var(--lime); bottom: -10%; right: -5%; animation-delay: -5s; opacity: 0.25; }
+.orb-3 { width: 25vw; height: 25vw; background: var(--blue); top: 40%; left: 60%; animation-delay: -10s; opacity: 0.3; }
+
+@keyframes orbDrift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(10vw, -10vh) scale(1.1); }
+  100% { transform: translate(-10vw, 15vh) scale(0.9); }
+}
+
+/* --- Entry Box & Role Switcher --- */
+.entry-box {
+  background: rgba(10, 30, 20, 0.4);
+  backdrop-filter: blur(30px);
+  padding: 35px 40px; border-radius: 30px;
+  text-align: center; width: 90%; max-width: 440px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.1);
+  z-index: 10;
+  animation: entryFloat 4s ease-in-out infinite alternate;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.5, 0, 0.2, 1), opacity 0.8s ease, filter 0.8s ease;
+}
+@keyframes entryFloat {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-12px); }
+}
+
+.entry-box.cinematic-out { transform: translateZ(600px) scale(2); opacity: 0; filter: blur(20px); }
+#entry-page.cinematic-flash { background: #fff; transition: background 0.6s cubic-bezier(0.8, 0, 0.2, 1); }
+#entry-page.cinematic-flash .orb { display: none; }
+
+.entry-box h1 { font-size: 2.5rem; margin-bottom: 8px; color: var(--lime); line-height: 1.1; letter-spacing: -1px; }
+.entry-box p { margin-bottom: 18px; opacity: 0.85; font-size: 0.95rem; }
+
+/* Role Selector Tabs */
+.role-switch {
+  display: flex; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 14px;
+  margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.1);
+}
+.role-tab {
+  flex: 1; padding: 10px; border: none; background: transparent; color: rgba(255,255,255,0.7);
+  font-weight: 700; border-radius: 10px; transition: all 0.3s; font-size: 0.9rem;
+}
+.role-tab.active { background: var(--lime); color: #052d20; box-shadow: 0 4px 15px rgba(183,243,107,0.3); }
+
+.entry-box input, .lang-select {
+  width: 100%; margin-bottom: 14px; padding: 14px;
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 14px;
+  background: rgba(0,0,0,0.3); color: white;
+  font-size: 1rem; outline: none; transition: all 0.3s;
+}
+.lang-select {
+  appearance: none;
+  background: rgba(0,0,0,0.5) url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") no-repeat right 10px center;
+}
+.lang-select option { background: #073b2a; color: white; }
+.entry-box input::placeholder { color: rgba(255,255,255,0.4); }
+.entry-box input:focus, .lang-select:focus { background: rgba(0,0,0,0.5); border-color: var(--lime); box-shadow: 0 0 15px rgba(183,243,107,0.2); }
+.entry-box button.btn-submit {
+  width: 100%; padding: 15px; background: var(--lime);
+  color: #052d20; font-weight: 800; border: none; border-radius: 14px;
+  font-size: 1.1rem; transition: all 0.3s; margin-top: 5px;
+}
+.entry-box button.btn-submit:hover { background: #a3ee4e; transform: translateY(-2px); box-shadow: 0 12px 25px rgba(183,243,107,0.3); }
+.entry-toggle { margin-top: 16px; font-size: 0.9rem; color: #ccebd9; }
+.entry-toggle u { cursor: pointer; }
+.entry-toggle:hover { color: var(--lime); }
+.error-msg { color: #ff6b6b; font-size: 0.85rem; margin-bottom: 10px; display: none; font-weight: bold; }
+
+/* --- Main Website & Admin Containers --- */
+#main-content, #admin-content {
+  display: none; 
+  opacity: 0;
+  transform: translateY(60px) scale(0.95);
+  filter: blur(15px);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease, filter 1.2s ease;
+}
+#main-content.visible, #admin-content.visible { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+
+/* --- Main Website Styles --- */
+header{position:sticky;top:0;z-index:20;background:rgba(5,45,31,.94);backdrop-filter:blur(8px);color:#fff;padding:12px 6%;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:1.35rem;font-weight:800}.logo span{color:var(--lime)}
+nav{display:flex;align-items:center}
+nav a{color:#fff;text-decoration:none;margin-left:18px;font-size:.9rem;}
+.nav-lang-select { background: transparent; color: var(--lime); border: 1px solid var(--lime); padding: 5px 10px; border-radius: 15px; margin-left: 15px; outline: none; font-size: 0.85rem;}
+.nav-lang-select option { background: #073b2a; color: white; }
+.nav-auth-btn{color:var(--lime) !important;font-weight:700;border:1px solid var(--lime);padding:6px 14px;border-radius:20px;background:rgba(183,243,107,0.1); cursor:default !important;}
+
+.hero{min-height:82vh;padding:80px 7%;display:flex;align-items:center;background:linear-gradient(120deg,rgba(3,48,32,.88),rgba(15,125,72,.72)),url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1800&q=85') center/cover;color:white}
+.hero-content{max-width:700px}.tag{display:inline-block;background:rgba(183,243,107,.18);border:1px solid rgba(183,243,107,.5);padding:7px 13px;border-radius:30px;margin-bottom:18px}
+h1{font-size:clamp(2.4rem,7vw,4.8rem);line-height:1.05;margin-bottom:20px}
+.hero p{font-size:1.1rem;max-width:600px;margin-bottom:28px}
+.btn{border:0;border-radius:30px;padding:13px 21px;font-weight:700;background:var(--lime);color:#12351f;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;margin:4px;transition:all 0.3s ease}
+.btn.alt{background:transparent;color:white;border:1px solid white}
+.btn-ig{background:#073b2a;color:#fff;border:1px solid #073b2a}
+.btn-ig:hover{background:#0a4f38;color:#fff}
+.btn-wa{background:var(--whatsapp);color:#fff !important;border:1px solid var(--whatsapp)}
+.btn-wa:hover{background:#20ba59;transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,211,102,0.35)}
+
+section{padding:70px 7%}.section-title{text-align:center;max-width:750px;margin:0 auto 35px}
+.section-title h2{font-size:2.2rem;color:var(--dark)}.section-title p{color:#527061; margin-top:10px;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.card{background:white;border-radius:20px;padding:25px;box-shadow:0 8px 30px rgba(11,70,40,.08);border:1px solid #ddf3e4; transition: transform 0.3s, border-color 0.3s;}
+.card:hover {transform: translateY(-5px); border-color: var(--green);}
+.icon{font-size:2.4rem;margin-bottom:10px}.card h3{margin-bottom:7px;color:var(--dark)}
+.stat-wrap{background:#073b2a;color:white}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;text-align:center}.stat strong{display:block;font-size:2.4rem;color:var(--lime)}
+
+.game-area{background:#eafff2;border-radius:25px;padding:25px;max-width:900px;margin:auto;box-shadow:0 10px 30px rgba(0,80,40,.08)}
+.game-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.badge{background:#fff;padding:8px 13px;border-radius:20px;font-weight:700; color:#073b2a}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:18px}
+.choice{background:white;border:2px solid #d7eee0;border-radius:15px;padding:18px;font-size:1rem;font-weight:700;transition: all 0.3s;}
+.choice:hover{border-color:var(--green);transform:translateY(-2px)}
+.feedback{margin-top:18px;font-weight:700;min-height:30px}
+#quizQuestion{font-size:1.25rem;font-weight:700}
+
+.cta{text-align:center;background:linear-gradient(135deg,#b7f36b,#42d392);position:relative;overflow:hidden}
+.cta-buttons{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+footer{background:#052d20;color:#ccebd9;text-align:center;padding:45px 7%}
+footer a{color:var(--lime);text-decoration:none;font-weight:700}
+
+.footer-logo {
+  display: block; margin: 0 auto 20px auto; width: 140px; height: auto; 
+  border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+  border: 3px solid rgba(255,255,255,0.1); transition: transform 0.3s ease;
+}
+.footer-logo:hover {transform: scale(1.05) rotate(5deg);}
+
+.reveal-up { opacity: 0; transform: translateY(50px); transition: all 0.8s ease-out; }
+.reveal-left { opacity: 0; transform: translateX(-50px); transition: all 0.8s ease-out; }
+.reveal-right { opacity: 0; transform: translateX(50px); transition: all 0.8s ease-out; }
+.reveal-zoom { opacity: 0; transform: scale(0.85); transition: all 0.8s ease-out; }
+.reveal-active { opacity: 1; transform: translate(0) scale(1); }
+
+.eco-particle { position: fixed; bottom: -30px; pointer-events: none; z-index: 1000; animation: floatUp ease-in forwards; }
+@keyframes floatUp { 0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 1; } 100% { transform: translateY(-110vh) rotate(360deg) scale(1.5); opacity: 0; } }
+.btn-success { background: white !important; color: var(--green) !important; transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.1); pointer-events: none; }
+
+/* --- Flora AI Chatbot --- */
+#flora-chat-btn {
+  position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, #159957, #073b2a);
+  color: #fff; border: 2px solid var(--lime); padding: 13px 20px; border-radius: 50px;
+  font-weight: 700; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(7,59,42,0.4);
+  z-index: 99998; transition: all 0.3s;
+}
+#flora-chat-btn:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 15px 35px rgba(21,153,87,0.45); }
+#flora-chat-btn .chat-pulse { width: 10px; height: 10px; background: var(--lime); border-radius: 50%; animation: pulse 1.6s infinite; }
+@keyframes pulse { 0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(183,243,107, 0.7); } 70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(183,243,107, 0); } 100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(183,243,107, 0); } }
+
+#flora-chat-window {
+  position: fixed; bottom: 90px; right: 25px; width: 360px; max-width: 90vw; height: 520px; max-height: 80vh;
+  background: #ffffff; border-radius: 22px; box-shadow: 0 25px 60px rgba(0,40,20,0.3); border: 1px solid #d2f0db;
+  display: flex; flex-direction: column; z-index: 99998; overflow: hidden; transform: scale(0.85) translateY(20px);
+  opacity: 0; pointer-events: none; transition: all 0.3s;
+}
+#flora-chat-window.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
+
+.chat-header { background: linear-gradient(135deg, #073b2a, #159957); color: white; padding: 15px 18px; display: flex; justify-content: space-between; align-items: center; }
+.chat-header .title-group { display: flex; align-items: center; gap: 10px; }
+.chat-avatar { font-size: 1.8rem; background: rgba(255,255,255,0.15); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+.chat-header h4 { font-size: 1.05rem; margin: 0; color: #fff; }
+.chat-header small { color: var(--lime); font-size: 0.75rem; }
+.chat-close-btn { background: transparent; border: none; color: #fff; font-size: 1.4rem; font-weight: bold; }
+
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f7fdf9; }
+.chat-bubble { max-width: 82%; padding: 11px 15px; border-radius: 18px; font-size: 0.92rem; line-height: 1.45; word-wrap: break-word; animation: fadeInMsg 0.3s ease; }
+@keyframes fadeInMsg { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.bot-msg { background: #e8f9ed; color: #0b3d28; border-top-left-radius: 4px; border: 1px solid #c9edd3; align-self: flex-start; }
+.user-msg { background: #159957; color: #ffffff; border-top-right-radius: 4px; align-self: flex-end; }
+
+.chat-suggestions { display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; background: #edf8f1; border-top: 1px solid #d4ede0; }
+.suggestion-chip { white-space: nowrap; background: white; border: 1px solid #b7f36b; color: #0d4a34; padding: 5px 11px; border-radius: 15px; font-size: 0.75rem; font-weight: 700; transition: all 0.2s; }
+.suggestion-chip:hover { background: var(--lime); color: #04241a; }
+
+.chat-input-area { display: flex; padding: 10px 12px; background: #ffffff; border-top: 1px solid #e1efe6; gap: 8px; }
+.chat-input-area input { flex: 1; border: 1px solid #cde7d6; padding: 10px 14px; border-radius: 20px; outline: none; font-size: 0.9rem; }
+.chat-input-area button { background: var(--green); color: white; border: none; padding: 9px 15px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+
+/* --- Admin Dashboard Layout & Theme --- */
+.admin-body { background: #071912; color: #e2f5eb; min-height: 100vh; font-size: 0.95rem; }
+.admin-header {
+  background: rgba(4, 28, 19, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid #14402e;
+  padding: 16px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100;
+}
+.admin-title { font-size: 1.3rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
+.admin-badge { background: rgba(183,243,107,0.15); color: var(--lime); border: 1px solid var(--lime); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+.btn-logout { background: #184232; color: #fff; border: 1px solid #2a634c; padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; transition: all 0.2s; }
+.btn-logout:hover { background: #e74c3c; border-color: #e74c3c; }
+
+.admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 20px; padding: 25px 5%; }
+.adm-card { background: #0c2b1e; border: 1px solid #184d37; border-radius: 18px; padding: 22px; position: relative; transition: all 0.3s; }
+.adm-card:hover { border-color: var(--lime); transform: translateY(-3px); }
+.adm-card-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #81b89a; margin-bottom: 8px; font-weight: 700; }
+.adm-card-value { font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1.1; }
+.adm-card-sub { font-size: 0.8rem; color: var(--lime); margin-top: 8px; display: flex; align-items: center; gap: 5px; }
+
+.admin-charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 0 5% 25px 5%; }
+@media(max-width:960px){ .admin-charts-grid { grid-template-columns: 1fr; } }
+
+.chart-box { background: #0c2b1e; border: 1px solid #184d37; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; }
+.chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.chart-head h3 { font-size: 1.1rem; color: #fff; }
+.time-btn-group button { background: #113828; border: 1px solid #1f5740; color: #a2d2b8; padding: 5px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; }
+.time-btn-group button.active { background: var(--lime); color: #04241a; border-color: var(--lime); }
+
+.admin-table-wrap { padding: 0 5% 40px 5%; }
+.adm-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #0c2b1e; border-radius: 18px; border: 1px solid #184d37; overflow: hidden; }
+.adm-table th { background: #103828; color: #81b89a; text-align: left; padding: 14px 18px; font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #184d37; }
+.adm-table td { padding: 14px 18px; color: #d1ebd8; border-bottom: 1px solid #123d2b; font-size: 0.9rem; }
+.adm-table tr:last-child td { border-bottom: none; }
+.status-tag { padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+.status-tag.active { background: rgba(37,211,102,0.2); color: #25D366; border: 1px solid rgba(37,211,102,0.4); }
+.status-tag.idle { background: rgba(241,196,15,0.2); color: #f1c40f; border: 1px solid rgba(241,196,15,0.4); }
+
+@media(max-width:650px){ nav a{display:none} .nav-lang-select{display:inline-block;} .hero{min-height:88vh;padding:60px 6%} section{padding:55px 6%} #flora-chat-window{ right: 5%; left: 5%; width: 90%; } }
+</style>
+</head>
+<body>
+
+<!-- Initial Gate / Entry Page with User & Admin Switcher -->
+<div id="entry-page">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="entry-box" id="entryBox">
+    <h1 data-i18n="appTitle">Nature's Palette</h1>
+    <p id="entrySubtitle">Choose login portal & enter details.</p>
+    
+    <!-- Portal Switcher Tabs -->
+    <div class="role-switch">
+      <button type="button" class="role-tab active" id="tabUser" onclick="switchRole('user')">🌱 Explorer</button>
+      <button type="button" class="role-tab" id="tabAdmin" onclick="switchRole('admin')">🔐 Admin Panel</button>
+    </div>
+
+    <!-- Language Selection -->
+    <select class="lang-select" id="entryLangSelect" onchange="changeLanguage(this.value)">
+      <option value="en">🌐 English</option>
+      <option value="hi">🌐 हिन्दी (Hindi)</option>
+      <option value="te">🌐 తెలుగు (Telugu)</option>
+      <option value="ta">🌐 தமிழ் (Tamil)</option>
+      <option value="ml">🌐 മലയാളം (Malayalam)</option>
+    </select>
+
+    <div class="error-msg" id="authError">⚠️ Invalid Admin Verification Code!</div>
+
+    <form onsubmit="handlePortalSubmit(event)">
+      <input type="text" id="entryName" placeholder="Full Name" style="display:none">
+      <input type="email" id="entryEmail" placeholder="Email Address" required>
+      <input type="password" id="entryPass" placeholder="Password" required>
+      <input type="password" id="adminCode" placeholder="Verification Code" style="display:none; border-color: var(--lime);">
+      <button type="submit" class="btn-submit" id="entrySubmitBtn">Enter World</button>
+    </form>
+    
+    <div class="entry-toggle" id="entryToggleWrap" onclick="toggleEntryMode()">
+      <span id="entryToggleText">Don't have an account? <u>Sign up</u></span>
+    </div>
+  </div>
+</div>
+
+<!-- Main User Website Content -->
+<div id="main-content">
+  <header>
+    <div class="logo">🎨 <span data-i18n="navTitle1">Nature's</span> <span style="color:var(--lime)" data-i18n="navTitle2">Palette</span></div>
+    <nav>
+      <a href="#learn" data-i18n="navLearn">Learn</a>
+      <a href="#games" data-i18n="navGames">Games</a>
+      <a href="#actions" data-i18n="navActions">Actions</a>
+      
+      <select class="nav-lang-select" id="navLangSelect" onchange="changeLanguage(this.value)">
+        <option value="en">EN</option>
+        <option value="hi">HI</option>
+        <option value="te">TE</option>
+        <option value="ta">TA</option>
+        <option value="ml">ML</option>
+      </select>
+
+      <a class="nav-auth-btn" id="navProfileText">User</a>
+    </nav>
+  </header>
+
+  <main>
+  <section class="hero">
+    <div class="hero-content reveal-zoom">
+      <div class="tag" data-i18n="heroTag">🌎 Creativity meets conservation.</div>
+      <h1 data-i18n="heroTitle">Protect Nature.<br>Inspire the Future.</h1>
+      <p data-i18n="heroDesc">Discover deep, meaningful ways to care for forests, oceans, and wildlife. Harness the power of art and compassion to build a sustainable world through interactive experiences.</p>
+      <a class="btn" href="#games" data-i18n="btnPlay">🎮 Play Eco Games</a>
+      <a class="btn alt" href="#learn" data-i18n="btnExplore">🌱 Explore Ecosystems</a>
+    </div>
+  </section>
+
+  <section id="learn">
+    <div class="section-title reveal-up">
+      <h2 data-i18n="learnTitle">Explore Our Planet's Needs</h2>
+      <p data-i18n="learnSub">Nature provides our most vital resources. Protecting it requires not just science, but deep emotional connection and compassion.</p>
+    </div>
+    <div class="cards">
+      <div class="card reveal-left"><div class="icon">🌳</div><h3 data-i18n="c1Title">Forest Sanctuaries</h3><p data-i18n="c1Desc">Forests are the lungs of the Earth, housing 80% of terrestrial biodiversity. Protect them.</p></div>
+      <div class="card reveal-up"><div class="icon">💧</div><h3 data-i18n="c2Title">Water Conservation</h3><p data-i18n="c2Desc">Less than 1% of the Earth's water is accessible. Save water and preserve aquatic habitats.</p></div>
+      <div class="card reveal-up"><div class="icon">♻️</div><h3 data-i18n="c3Title">Circular Living</h3><p data-i18n="c3Desc">Embrace a circular economy by composting and eliminating single-use plastics.</p></div>
+      <div class="card reveal-right"><div class="icon">🐘</div><h3 data-i18n="c4Title">Wildlife Advocacy</h3><p data-i18n="c4Desc">Respect wild boundaries and advocate against the exploitation of creatures.</p></div>
+      <div class="card reveal-left"><div class="icon">🖌️</div><h3 data-i18n="c5Title">Art as Advocacy</h3><p data-i18n="c5Desc">Use art to highlight environmental fragility and evoke compassion for real change.</p></div>
+      <div class="card reveal-right"><div class="icon">🌱</div><h3 data-i18n="c6Title">Restorative Action</h3><p data-i18n="c6Desc">Engage in local landscape restoration by rewilding spaces with native flora.</p></div>
+    </div>
+  </section>
+
+  <section class="stat-wrap">
+    <div class="section-title reveal-up">
+      <h2 style="color:white" data-i18n="statTitle">Every Choice Counts</h2>
+    </div>
+    <div class="stats">
+      <div class="stat reveal-zoom"><strong>3R</strong><span data-i18n="stat1">Reduce • Reuse • Recycle</span></div>
+      <div class="stat reveal-zoom"><strong>1🌳</strong><span data-i18n="stat2">Tree can support an ecosystem</span></div>
+      <div class="stat reveal-zoom"><strong>🎨</strong><span data-i18n="stat3">Art inspires lasting change</span></div>
+      <div class="stat reveal-zoom"><strong>∞</strong><span data-i18n="stat4">Nature needs compassion</span></div>
+    </div>
+  </section>
+
+  <section id="games">
+    <div class="section-title reveal-up">
+      <h2 data-i18n="gamesTitle">🎮 Interactive Eco Games</h2>
+      <p data-i18n="gamesSub">Learn while you play. Build your Eco Score through knowledge.</p>
+    </div>
+
+    <!-- Quiz Area -->
+    <div class="game-area reveal-up">
+      <div class="game-head">
+        <div class="badge">🏆 <span data-i18n="ecoScore">Eco Score</span>: <span id="score">0</span></div>
+        <div class="badge"><span data-i18n="questionText">Question</span> <span id="qnum">1</span>/3</div>
+      </div>
+      <div id="quizQuestion"></div>
+      <div class="choice-grid" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn" id="nextBtn" style="display:none" data-i18n="btnNext">Next Question →</button>
+    </div>
+
+    <div style="height:25px"></div>
+
+    <!-- Waste Sorting Area -->
+    <div class="game-area reveal-right">
+      <h2 data-i18n="wasteTitle">♻️ Waste Sorting Challenge</h2>
+      <p id="wasteText" style="margin-top:8px"></p>
+      <div class="choice-grid">
+        <button class="choice" onclick="sortWaste('recycle')" data-i18n="wRecycle">♻️ Recycling</button>
+        <button class="choice" onclick="sortWaste('organic')" data-i18n="wOrganic">🍎 Organic</button>
+        <button class="choice" onclick="sortWaste('general')" data-i18n="wGeneral">🗑️ General</button>
+      </div>
+      <div class="feedback" id="wasteFeedback"></div>
+    </div>
+  </section>
+
+  <section id="actions">
+    <div class="section-title reveal-up">
+      <h2 data-i18n="actTitle">🌱 Take the Eco Challenge</h2>
+    </div>
+    <div class="cards">
+      <div class="card reveal-up"><div class="icon">🚰</div><h3 data-i18n="a1Title">Save Water</h3><p data-i18n="a1Desc">Take shorter showers and close the tap.</p></div>
+      <div class="card reveal-up"><div class="icon">🚲</div><h3 data-i18n="a2Title">Travel Green</h3><p data-i18n="a2Desc">Walk or use public transport.</p></div>
+      <div class="card reveal-up"><div class="icon">🎨</div><h3 data-i18n="a3Title">Create Art</h3><p data-i18n="a3Desc">Dedicate art to nature.</p></div>
+      <div class="card reveal-up"><div class="icon">🌱</div><h3 data-i18n="a4Title">Plant Trees</h3><p data-i18n="a4Desc">Grow native plants for biodiversity.</p></div>
+    </div>
+  </section>
+
+  <section class="cta reveal-zoom">
+    <h2 data-i18n="ctaTitle">Be the Change 🌍</h2>
+    <div class="cta-buttons">
+      <button id="helpBtn" class="btn" onclick="triggerAnimation()" data-i18n="btnHelp">I Choose to Help 🌿</button>
+      <a href="https://www.instagram.com/nature.s.pallete?stkn=YWh5c2lqeXNsOTE4" target="_blank" class="btn btn-ig" data-i18n="btnIg">📸 Support on Instagram</a>
+    </div>
+  </section>
+  </main>
+
+  <footer>
+    <img src="image_65359d.png" alt="Nature's Palette Emblem" class="footer-logo">
+    <p data-i18n="footer1">🎨 Nature's Palette — Awareness today. A healthier planet tomorrow.</p>
+    <div style="margin-top:20px;">
+      <a href="https://wa.me/qr/STF7KLNSXX25J1" target="_blank" class="btn btn-wa" data-i18n="btnWa">
+        💬 Chat with Us on WhatsApp
+      </a>
+    </div>
+    <p style="margin-top:22px;font-size:.95rem;color:var(--lime);font-weight:700;" data-i18n="footer2">An initiative by students of Amrita University Nagercoil Campus.</p>
+    <p style="margin-top:8px;font-size:.9rem;color:#b2dfcc;">
+      <strong data-i18n="madeBy">Made by:</strong> Harshavardhan M, Akalya R, Sai nishant G, Ishan V, Varshinikrishna N
+    </p>
+  </footer>
+
+  <!-- Flora AI Chatbot Widget -->
+  <button id="flora-chat-btn" onclick="toggleFloraChat()">
+    <div class="chat-pulse"></div>
+    <span data-i18n="chatBtn">🌿 Ask Flora AI</span>
+  </button>
+
+  <div id="flora-chat-window">
+    <div class="chat-header">
+      <div class="title-group">
+        <div class="chat-avatar">🌱</div>
+        <div>
+          <h4>Flora AI</h4>
+          <small data-i18n="chatSub">● Nature & Eco Guide</small>
+        </div>
+      </div>
+      <button class="chat-close-btn" onclick="toggleFloraChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="floraChatMessages">
+      <div class="chat-bubble bot-msg" id="floraGreeting">
+        Namaste & Hello! 🌸 I am Flora, your nature companion. Ask me anything!
+      </div>
+    </div>
+    <div class="chat-suggestions">
+      <button class="suggestion-chip" onclick="quickAsk(0)" data-i18n="chip1">🌳 Forests</button>
+      <button class="suggestion-chip" onclick="quickAsk(1)" data-i18n="chip2">💧 Save Water</button>
+      <button class="suggestion-chip" onclick="quickAsk(2)" data-i18n="chip3">♻️ 3Rs</button>
+      <button class="suggestion-chip" onclick="quickAsk(3)" data-i18n="chip4">🐾 Wildlife</button>
+    </div>
+    <form class="chat-input-area" onsubmit="handleFloraSubmit(event)">
+      <input type="text" id="floraInput" placeholder="Type a message..." autocomplete="off">
+      <button type="submit" data-i18n="chatSend">Send</button>
+    </form>
+  </div>
+</div>
+
+<!-- Admin Dashboard Section -->
+<div id="admin-content" class="admin-body">
+  <div class="admin-header">
+    <div class="admin-title">
+      🎨 <span>Nature's Palette</span> <span class="admin-badge">Admin Dashboard</span>
+    </div>
+    <button class="btn-logout" onclick="logoutAdmin()">🚪 Sign Out</button>
+  </div>
+
+  <div class="admin-grid">
+    <div class="adm-card">
+      <div class="adm-card-title">Total Visitors</div>
+      <div class="adm-card-value" id="admTotalVisitors">428</div>
+      <div class="adm-card-sub">▲ 14.2% from last week</div>
+    </div>
+    <div class="adm-card">
+      <div class="adm-card-title">Active Live Users</div>
+      <div class="adm-card-value" id="admLiveUsers" style="color:var(--lime)">18</div>
+      <div class="adm-card-sub">🟢 Real-time active sessions</div>
+    </div>
+    <div class="adm-card">
+      <div class="adm-card-title">Flora AI Queries</div>
+      <div class="adm-card-value">214</div>
+      <div class="adm-card-sub">⚡ 88% Resolution Rate</div>
+    </div>
+    <div class="adm-card">
+      <div class="adm-card-title">Eco Pledges Taken</div>
+      <div class="adm-card-value">186</div>
+      <div class="adm-card-sub">🌿 43% Conversion Rate</div>
+    </div>
+  </div>
+
+  <div class="admin-charts-grid">
+    <div class="chart-box">
+      <div class="chart-head">
+        <h3>📊 Traffic Analytics Overview</h3>
+        <div class="time-btn-group">
+          <button class="active" onclick="updateTrafficFilter('daily')">Daily</button>
+          <button onclick="updateTrafficFilter('weekly')">Weekly</button>
+          <button onclick="updateTrafficFilter('monthly')">Monthly</button>
+        </div>
+      </div>
+      <div style="height:280px;"><canvas id="trafficChart"></canvas></div>
+    </div>
+    
+    <div class="chart-box">
+      <div class="chart-head">
+        <h3>📲 Traffic Acquisition</h3>
+      </div>
+      <div style="height:280px; position:relative;"><canvas id="sourceChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="admin-table-wrap">
+    <h3 style="color:#fff; margin-bottom:15px;">👤 Recent Active Explorer Sessions</h3>
+    <table class="adm-table">
+      <thead>
+        <tr>
+          <th>User / Visitor ID</th>
+          <th>Location</th>
+          <th>Device & OS</th>
+          <th>Preferred Lang</th>
+          <th>Interactions</th>
+          <th>Eco Score</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>harsha***@gmail.com</strong><br><small style="color:#81b89a">v_8914</small></td>
+          <td>📍 Tamil Nadu, IN</td>
+          <td>Desktop (Chrome)</td>
+          <td><span style="color:var(--lime)">English</span></td>
+          <td>Quiz, Waste Sorting</td>
+          <td><strong>35 pts</strong></td>
+          <td><span class="status-tag active">Active</span></td>
+        </tr>
+        <tr>
+          <td><strong>varshini***@amrita.edu</strong><br><small style="color:#81b89a">v_8913</small></td>
+          <td>📍 Tamil Nadu, IN</td>
+          <td>Mobile (Android)</td>
+          <td><span style="color:var(--lime)">Tamil</span></td>
+          <td>Flora AI, Pledged</td>
+          <td><strong>50 pts</strong></td>
+          <td><span class="status-tag active">Active</span></td>
+        </tr>
+        <tr>
+          <td><strong>visitor_guest482</strong><br><small style="color:#81b89a">v_8912</small></td>
+          <td>📍 Karnataka, IN</td>
+          <td>Mobile (iOS)</td>
+          <td><span style="color:var(--lime)">Hindi</span></td>
+          <td>Eco Quiz</td>
+          <td><strong>10 pts</strong></td>
+          <td><span class="status-tag idle">Idle 3m</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// =========================================
+// Portal Switcher & Admin Auth Logic
+// =========================================
+let currentRole = 'user';
+let isSignup = false;
+
+function switchRole(role) {
+  currentRole = role;
+  document.getElementById('authError').style.display = 'none';
+  const tabUser = document.getElementById('tabUser');
+  const tabAdmin = document.getElementById('tabAdmin');
+  const adminCodeInput = document.getElementById('adminCode');
+  const nameInput = document.getElementById('entryName');
+  const toggleWrap = document.getElementById('entryToggleWrap');
+
+  if (role === 'admin') {
+    tabAdmin.classList.add('active');
+    tabUser.classList.remove('active');
+    adminCodeInput.style.display = 'block';
+    adminCodeInput.required = true;
+    nameInput.style.display = 'none';
+    nameInput.required = false;
+    toggleWrap.style.display = 'none';
+    document.getElementById('entrySubtitle').textContent = 'Enter admin credentials & verification code.';
+    document.getElementById('entrySubmitBtn').textContent = '🔑 Access Admin Panel';
+  } else {
+    tabUser.classList.add('active');
+    tabAdmin.classList.remove('active');
+    adminCodeInput.style.display = 'none';
+    adminCodeInput.required = false;
+    toggleWrap.style.display = 'block';
+    document.getElementById('entrySubtitle').textContent = 'Sign in to start your ecological journey.';
+    document.getElementById('entrySubmitBtn').textContent = isSignup ? 'Join World' : 'Enter World';
+    if(isSignup) { nameInput.style.display = 'block'; nameInput.required = true; }
+  }
+}
+
+function handlePortalSubmit(e) {
+  e.preventDefault();
+  document.getElementById('authError').style.display = 'none';
+
+  if (currentRole === 'admin') {
+    const code = document.getElementById('adminCode').value.trim();
+    if (code !== 'ECE26') {
+      document.getElementById('authError').style.display = 'block';
+      return;
+    }
+    transitionToView('admin');
+  } else {
+    let userName = "Eco Warrior";
+    if (isSignup) {
+      const inputName = document.getElementById('entryName').value.trim();
+      if (inputName) userName = inputName.split(' ')[0];
+    }
+    document.getElementById('navProfileText').textContent = '👤 ' + userName;
+    transitionToView('user');
+  }
+}
+
+function transitionToView(target) {
+  const entryPage = document.getElementById('entry-page');
+  const entryBox = document.getElementById('entryBox');
+  const mainContent = document.getElementById('main-content');
+  const adminContent = document.getElementById('admin-content');
+  
+  window.scrollTo(0, 0);
+  entryBox.classList.add('cinematic-out');
+  setTimeout(() => entryPage.classList.add('cinematic-flash'), 400);
+
+  setTimeout(() => {
+    entryPage.style.display = 'none';
+    if (target === 'admin') {
+      adminContent.style.display = 'block';
+      void adminContent.offsetWidth;
+      adminContent.classList.add('visible');
+      initAdminAnalytics();
+    } else {
+      mainContent.style.display = 'block';
+      void mainContent.offsetWidth;
+      mainContent.classList.add('visible');
+      initScrollObserver();
+    }
+  }, 900);
+}
+
+function logoutAdmin() {
+  location.reload();
+}
+
+// =========================================
+// Language Translation Engine (i18n)
+// =========================================
+const translations = {
+  en: {
+    appTitle: "Nature's Palette", btnEnter: "Enter World", btnJoin: "Join World", loginToggle: "Don't have an account? <u>Sign up</u>", loginToggle2: "Already have an account? <u>Login</u>",
+    navTitle1: "Nature's", navTitle2: "Palette", navLearn: "Learn", navGames: "Games", navActions: "Actions",
+    heroTag: "🌎 Creativity meets conservation.", heroTitle: "Protect Nature.<br>Inspire the Future.", heroDesc: "Discover deep, meaningful ways to care for forests, oceans, and wildlife. Harness the power of art and compassion to build a sustainable world.",
+    btnPlay: "🎮 Play Eco Games", btnExplore: "🌱 Explore Ecosystems",
+    learnTitle: "Explore Our Planet's Needs", learnSub: "Nature provides our most vital resources. Protecting it requires compassion.",
+    c1Title: "Forest Sanctuaries", c1Desc: "Forests are the lungs of the Earth. Protect them and end deforestation.",
+    c2Title: "Water Conservation", c2Desc: "Less than 1% of the Earth's water is accessible. Save water daily.",
+    c3Title: "Circular Living", c3Desc: "Embrace a circular economy by composting and eliminating plastic.",
+    c4Title: "Wildlife Advocacy", c4Desc: "Respect wild boundaries and advocate against exploitation.",
+    c5Title: "Art as Advocacy", c5Desc: "Use art to evoke the compassion needed to inspire real change.",
+    c6Title: "Restorative Action", c6Desc: "Engage in local landscape restoration with native flora.",
+    statTitle: "Every Choice Counts", stat1: "Reduce • Reuse • Recycle", stat2: "Tree can support an ecosystem", stat3: "Art inspires lasting change", stat4: "Nature needs compassion",
+    gamesTitle: "🎮 Interactive Eco Games", gamesSub: "Learn while you play. Build your Eco Score through knowledge.",
+    ecoScore: "Eco Score", questionText: "Question", btnNext: "Next Question →",
+    wasteTitle: "♻️ Waste Sorting Challenge", wRecycle: "♻️ Recycling", wOrganic: "🍎 Organic", wGeneral: "🗑️ General",
+    actTitle: "🌱 Take the Eco Challenge", a1Title: "Save Water", a1Desc: "Take shorter showers.", a2Title: "Travel Green", a2Desc: "Walk or use public transport.", a3Title: "Create Art", a3Desc: "Dedicate art to nature.", a4Title: "Plant Trees", a4Desc: "Grow native plants.",
+    ctaTitle: "Be the Change 🌍", btnHelp: "I Choose to Help 🌿", btnIg: "📸 Support on Instagram", btnWa: "💬 Chat with Us on WhatsApp",
+    footer1: "🎨 Nature's Palette — Awareness today. A healthier planet tomorrow.", footer2: "An initiative by students of Amrita University Nagercoil Campus.", madeBy: "Made by:",
+    chatBtn: "🌿 Ask Flora AI", chatSub: "● Nature Guide", chatSend: "Send", chip1: "🌳 Forests", chip2: "💧 Water", chip3: "♻️ 3Rs", chip4: "🐾 Wildlife",
+    greeting: "Namaste & Hello! 🌸 I am Flora, your nature companion. Ask me anything!",
+    wQ: "Where should {item} go?", wC1: "Correct! +5 Points", wC2: "Try again!", 
+    qC1: "Correct! +10 Points", qC2: "Not quite — try the next one!"
+  },
+  hi: {
+    appTitle: "प्रकृति का रंगमंच", btnEnter: "प्रवेश करें", btnJoin: "शामिल हों", loginToggle: "खाता नहीं है? <u>साइन अप करें</u>", loginToggle2: "पहले से खाता है? <u>लॉगिन करें</u>",
+    navTitle1: "नेचर्स", navTitle2: "पैलेट", navLearn: "सीखें", navGames: "खेल", navActions: "कार्य",
+    heroTag: "🌎 रचनात्मकता और संरक्षण।", heroTitle: "प्रकृति की रक्षा करें।<br>भविष्य को प्रेरित करें।", heroDesc: "जंगलों, महासागरों और वन्यजीवों की देखभाल के गहरे तरीके खोजें। एक संधारणीय दुनिया बनाने के लिए कला और करुणा का उपयोग करें।",
+    btnPlay: "🎮 इको गेम्स खेलें", btnExplore: "🌱 पारिस्थितिकी तंत्र खोजें",
+    learnTitle: "हमारे ग्रह की ज़रूरतें", learnSub: "प्रकृति हमारे सबसे महत्वपूर्ण संसाधन प्रदान करती है। इसकी रक्षा करें।",
+    c1Title: "वन अभयारण्य", c1Desc: "जंगल पृथ्वी के फेफड़े हैं। उन्हें बचाएं।",
+    c2Title: "जल संरक्षण", c2Desc: "पृथ्वी का 1% से भी कम पानी सुलभ है। रोज़ पानी बचाएं।",
+    c3Title: "चक्रीय जीवन", c3Desc: "प्लास्टिक का उपयोग बंद करें और खाद बनाएं।",
+    c4Title: "वन्यजीव वकालत", c4Desc: "जंगली सीमाओं का सम्मान करें और जीवों की रक्षा करें।",
+    c5Title: "कला और समर्थन", c5Desc: "वास्तविक परिवर्तन को प्रेरित करने के लिए कला का उपयोग करें।",
+    c6Title: "पुनर्स्थापना कार्य", c6Desc: "स्थानीय पौधों के साथ परिदृश्य को बहाल करें।",
+    statTitle: "हर विकल्प मायने रखता है", stat1: "कम करें • पुन: उपयोग करें • रीसायकल", stat2: "पेड़ एक पारिस्थितिकी तंत्र का समर्थन करता है", stat3: "कला परिवर्तन को प्रेरित करती है", stat4: "प्रकृति को करुणा चाहिए",
+    gamesTitle: "🎮 इंटरएक्टिव गेम्स", gamesSub: "खेलते हुए सीखें। अपना इको स्कोर बनाएं।",
+    ecoScore: "इको स्कोर", questionText: "प्रश्न", btnNext: "अगला प्रश्न →",
+    wasteTitle: "♻️ अपशिष्ट छंटाई", wRecycle: "♻️ रीसायकल", wOrganic: "🍎 जैविक", wGeneral: "🗑️ सामान्य",
+    actTitle: "🌱 इको चैलेंज लें", a1Title: "पानी बचाएं", a1Desc: "नहाने में कम समय लें।", a2Title: "हरित यात्रा", a2Desc: "पैदल चलें या सार्वजनिक परिवहन लें।", a3Title: "कला बनाएं", a3Desc: "प्रकृति को कला समर्पित करें।", a4Title: "पेड़ लगाएं", a4Desc: "स्थानीय पौधे उगाएं।",
+    ctaTitle: "परिवर्तन बनें 🌍", btnHelp: "मैं मदद करूंगा 🌿", btnIg: "📸 इंस्टाग्राम पर समर्थन", btnWa: "💬 व्हाट्सएप पर चैट करें",
+    footer1: "🎨 नेचर्स पैलेट — आज की जागरूकता। कल का स्वस्थ ग्रह।", footer2: "अमृता विश्वविद्यालय नागरकोइल कैंपस के छात्रों की पहल।", madeBy: "निर्माता:",
+    chatBtn: "🌿 फ्लोरा से पूछें", chatSub: "● नेचर गाइड", chatSend: "भेजें", chip1: "🌳 वन", chip2: "💧 पानी", chip3: "♻️ 3Rs", chip4: "🐾 वन्यजीव",
+    greeting: "नमस्ते! 🌸 मैं फ्लोरा हूँ, आपकी प्रकृति मार्गदर्शक। मुझसे कुछ भी पूछें!",
+    wQ: "{item} कहाँ जाना चाहिए?", wC1: "सही! +5 अंक", wC2: "पुनः प्रयास करें!",
+    qC1: "सही! +10 अंक", qC2: "अगला प्रयास करें!"
+  },
+  te: {
+    appTitle: "నేచర్స్ ప్యాలెట్", btnEnter: "ప్రవేశించండి", btnJoin: "చేరండి", loginToggle: "ఖాతా లేదా? <u>సైన్ అప్</u>", loginToggle2: "ఖాతా ఉందా? <u>లాగిన్</u>",
+    navTitle1: "నేచర్స్", navTitle2: "ప్యాలెట్", navLearn: "నేర్చుకోండి", navGames: "ఆటలు", navActions: "చర్యలు",
+    heroTag: "🌎 సృజనాత్మకత మరియు సంరక్షణ.", heroTitle: "ప్రకృతిని రక్షించండి.<br>భవిష్యత్తును ప్రేరేపించండి.", heroDesc: "అడవులు మరియు వన్యప్రాణులను రక్షించడానికి లోతైన మార్గాలను కనుగొనండి.",
+    btnPlay: "🎮 ఎకో గేమ్స్ ఆడండి", btnExplore: "🌱 పర్యావరణాన్ని అన్వేషించండి",
+    learnTitle: "మన గ్రహం అవసరాలు", learnSub: "ప్రకృతి మనకు అత్యంత కీలకమైన వనరులను ఇస్తుంది. దానిని రక్షించండి.",
+    c1Title: "అడవుల సంరక్షణ", c1Desc: "అడవులు భూమికి ఊపిరితిత్తులు. వాటిని రక్షించండి.",
+    c2Title: "నీటి సంరక్షణ", c2Desc: "భూమిపై 1% కన్నా తక్కువ నీరు మాత్రమే అందుబాటులో ఉంది.",
+    c3Title: "ప్లాస్టిక్ నిర్మూలన", c3Desc: "ప్లాస్టిక్ వాడకం తగ్గించండి మరియు సేంద్రీయ ఎరువులు వాడండి.",
+    c4Title: "వన్యప్రాణుల రక్షణ", c4Desc: "అడవి జంతువులను గౌరవించండి మరియు రక్షించండి.",
+    c5Title: "కళ ద్వారా మద్దతు", c5Desc: "మార్పు కోసం కళను ఉపయోగించండి.",
+    c6Title: "పునరుద్ధరణ", c6Desc: "స్థానిక మొక్కలను పెంచండి.",
+    statTitle: "ప్రతి ఎంపిక ముఖ్యం", stat1: "తగ్గించండి • తిరిగి వాడండి", stat2: "చెట్టు పర్యావరణానికి ఆధారం", stat3: "కళ మార్పు తెస్తుంది", stat4: "ప్రకృతికి ప్రేమ అవసరం",
+    gamesTitle: "🎮 పర్యావరణ ఆటలు", gamesSub: "ఆడుతూ నేర్చుకోండి. పాయింట్లు పెంచుకోండి.",
+    ecoScore: "ఎకో స్కోర్", questionText: "ప్రశ్న", btnNext: "తదుపరి ప్రశ్న →",
+    wasteTitle: "♻️ చెత్త విభజన", wRecycle: "♻️ రీసైకిల్", wOrganic: "🍎 సేంద్రీయ", wGeneral: "🗑️ సాధారణ",
+    actTitle: "🌱 ఎకో ఛాలెంజ్", a1Title: "నీరు ఆదా", a1Desc: "నీటి వృధా అరికట్టండి.", a2Title: "హరిత ప్రయాణం", a2Desc: "నడవండి లేదా బస్సు వాడండి.", a3Title: "కళా సృష్టి", a3Desc: "ప్రకృతి కోసం కళను సృష్టించండి.", a4Title: "మొక్కలు నాటండి", a4Desc: "స్థానిక మొక్కలు పెంచండి.",
+    ctaTitle: "మార్పు తీసుకురండి 🌍", btnHelp: "నేను సహాయం చేస్తాను 🌿", btnIg: "📸 ఇన్‌స్టాగ్రామ్ మద్దతు", btnWa: "💬 వాట్సాప్‌లో చాట్ చేయండి",
+    footer1: "🎨 నేచర్స్ ప్యాలెట్ — నేటి అవగాహన, రేపటి ఆరోగ్యకరమైన భూమి.", footer2: "అమృత యూనివర్సిటీ విద్యార్థుల చొరవ.", madeBy: "రూపొందించినవారు:",
+    chatBtn: "🌿 ఫ్లోరాని అడగండి", chatSub: "● నేచర్ గైడ్", chatSend: "పంపు", chip1: "🌳 అడవులు", chip2: "💧 నీరు", chip3: "♻️ 3Rs", chip4: "🐾 వన్యప్రాణులు",
+    greeting: "నమస్కారం! 🌸 నేను ఫ్లోరా, మీ ప్రకృతి గైడ్. ఏమైనా అడగండి!",
+    wQ: "{item} ఎక్కడ వేయాలి?", wC1: "సరైనది! +5 పాయింట్లు", wC2: "మళ్ళీ ప్రయత్నించండి!",
+    qC1: "సరైనది! +10 పాయింట్లు", qC2: "తదుపరి ప్రయత్నించండి!"
+  },
+  ta: {
+    appTitle: "இயற்கையின் வண்ணங்கள்", btnEnter: "உள்ளே செல்", btnJoin: "இணைக", loginToggle: "கணக்கு இல்லையா? <u>பதிவு செய்</u>", loginToggle2: "ஏற்கனவே கணக்கு உள்ளதா? <u>உள்நுழை</u>",
+    navTitle1: "நேச்சர்ஸ்", navTitle2: "பேலட்", navLearn: "கற்க", navGames: "விளையாட்டுகள்", navActions: "செயல்கள்",
+    heroTag: "🌎 இயற்கையை காப்போம்.", heroTitle: "இயற்கையை பாதுகாப்போம்.<br>எதிர்காலத்தை உருவாக்குவோம்.", heroDesc: "காடுகள், கடல்கள் மற்றும் வனவிலங்குகளை பாதுகாக்கும் வழிகளை கண்டறியவும்.",
+    btnPlay: "🎮 விளையாடு", btnExplore: "🌱 சுற்றுச்சூழலை அறிவோம்",
+    learnTitle: "பூமியின் தேவைகள்", learnSub: "இயற்கை நமக்கு அத்தியாவசிய வளங்களை தருகிறது. அதை காப்போம்.",
+    c1Title: "காடுகள் பாதுகாப்பு", c1Desc: "காடுகள் பூமியின் நுரையீரல். அவற்றை பாதுகாப்போம்.",
+    c2Title: "நீர் சேமிப்பு", c2Desc: "1% க்கும் குறைவான நீரே நமக்கு கிடைக்கிறது. நீரை சேமிப்போம்.",
+    c3Title: "பிளாஸ்டிக் தவிர்ப்பு", c3Desc: "பிளாஸ்டிக்கை தவிர்த்து, மறுசுழற்சியை பின்பற்றுவோம்.",
+    c4Title: "வனவிலங்கு பாதுகாப்பு", c4Desc: "வனவிலங்குகளை மதித்து பாதுகாப்போம்.",
+    c5Title: "கலை மற்றும் விழிப்புணர்வு", c5Desc: "விழிப்புணர்வை ஏற்படுத்த கலையை பயன்படுத்துவோம்.",
+    c6Title: "மரம் வளர்த்தல்", c6Desc: "உள்ளூர் தாவரங்களை நட்டு வளர்ப்போம்.",
+    statTitle: "ஒவ்வொரு செயலும் முக்கியம்", stat1: "குறை, மறுபயன்பாடு, மறுசுழற்சி", stat2: "மரம் உயிரினங்களை காக்கும்", stat3: "கலை மாற்றத்தை தரும்", stat4: "இயற்கைக்கு அன்பு தேவை",
+    gamesTitle: "🎮 சுற்றுச்சூழல் விளையாட்டுகள்", gamesSub: "விளையாடிக்கொண்டே கற்றுக்கொள்ளுங்கள்.",
+    ecoScore: "மதிப்பெண்", questionText: "கேள்வி", btnNext: "அடுத்த கேள்வி →",
+    wasteTitle: "♻️ கழிவு மேலாண்மை", wRecycle: "♻️ மறுசுழற்சி", wOrganic: "🍎 மக்கும் குப்பை", wGeneral: "🗑️ சாதாரண குப்பை",
+    actTitle: "🌱 சுற்றுச்சூழல் சவால்", a1Title: "நீர் சேமிப்பு", a1Desc: "நீரை வீணாக்காதீர்கள்.", a2Title: "பசுமை பயணம்", a2Desc: "நடந்து அல்லது பேருந்தில் செல்லவும்.", a3Title: "கலை உருவாக்கு", a3Desc: "இயற்கைக்காக கலையை உருவாக்கு.", a4Title: "மரம் நடுக", a4Desc: "உள்ளூர் செடிகளை வளர்க்கவும்.",
+    ctaTitle: "மாற்றமாக இருங்கள் 🌍", btnHelp: "நான் உதவுகிறேன் 🌿", btnIg: "📸 இன்ஸ்டாகிராம் ஆதரவு", btnWa: "💬 வாட்ஸ்அப்பில் பேசுங்கள்",
+    footer1: "🎨 நேச்சர்ஸ் பேலட் — இன்றைய விழிப்புணர்வு, நாளைய ஆரோக்கியமான பூமி.", footer2: "அமிர்தா பல்கலைக்கழக மாணவர்களின் முயற்சி.", madeBy: "உருவாக்கியவர்கள்:",
+    chatBtn: "🌿 ஃப்ளோராவிடம் கேள்", chatSub: "● இயற்கை வழிகாட்டி", chatSend: "அனுப்பு", chip1: "🌳 காடுகள்", chip2: "💧 நீர்", chip3: "♻️ 3Rs", chip4: "🐾 வனவிலங்குகள்",
+    greeting: "வணக்கம்! 🌸 நான் ஃப்ளோரா. இயற்கையை பற்றி என்னிடம் கேளுங்கள்!",
+    wQ: "{item} எங்கு போட வேண்டும்?", wC1: "சரி! +5 மதிப்பெண்", wC2: "மீண்டும் முயற்சிக்கவும்!",
+    qC1: "சரி! +10 மதிப்பெண்", qC2: "அடுத்ததை முயற்சிக்கவும்!"
+  },
+  ml: {
+    appTitle: "പ്രകൃതിയുടെ നിറങ്ങൾ", btnEnter: "പ്രവേശിക്കുക", btnJoin: "ചേരുക", loginToggle: "അക്കൗണ്ട് ഇല്ലേ? <u>സൈൻ അപ്പ്</u>", loginToggle2: "അക്കൗണ്ട് ഉണ്ടോ? <u>ലോഗിൻ</u>",
+    navTitle1: "നേച്ചേഴ്സ്", navTitle2: "പാലറ്റ്", navLearn: "പഠിക്കുക", navGames: "ഗെയിമുകൾ", navActions: "പ്രവർത്തനങ്ങൾ",
+    heroTag: "🌎 സർഗ്ഗാത്മകതയും സംരക്ഷണവും.", heroTitle: "പ്രകൃതിയെ സംരക്ഷിക്കുക.<br>ഭാവി വാഗ്ദാനം ചെയ്യുക.", heroDesc: "കാടുകളും വന്യജീവികളെയും സംരക്ഷിക്കാനുള്ള വഴികൾ കണ്ടെത്തുക.",
+    btnPlay: "🎮 ഗെയിമുകൾ കളിക്കുക", btnExplore: "🌱 പരിസ്ഥിതി അറിയുക",
+    learnTitle: "ഭൂമിയുടെ ആവശ്യങ്ങൾ", learnSub: "പ്രകൃതി നമുക്ക് വിഭവങ്ങൾ നൽകുന്നു. അതിനെ സംരക്ഷിക്കുക.",
+    c1Title: "വന സംരക്ഷണം", c1Desc: "കാടുകൾ ഭൂമിയുടെ ശ്വാസകോശമാണ്. അവയെ സംരക്ഷിക്കുക.",
+    c2Title: "ജല സംരക്ഷണം", c2Desc: "ജലം സംരക്ഷിക്കുക. ശുദ്ധജലം കുറവാണ്.",
+    c3Title: "പ്ലാസ്റ്റിക് ഒഴിവാക്കുക", c3Desc: "പ്ലാസ്റ്റിക് ഒഴിവാക്കി പുനരുപയോഗം ശീലമാക്കുക.",
+    c4Title: "വന്യജീവി സംരക്ഷണം", c4Desc: "വന്യജീവികളെ സംരക്ഷിക്കുക.",
+    c5Title: "കലയിലൂടെ അവബോധം", c5Desc: "മാറ്റത്തിനായി കലയെ ഉപയോഗിക്കുക.",
+    c6Title: "മരങ്ങൾ നട്ടുപിടിപ്പിക്കുക", c6Desc: "പ്രാദേശിക സസ്യങ്ങൾ വളർത്തുക.",
+    statTitle: "ഓരോ തീരുമാനവും പ്രധാനമാണ്", stat1: "കുറയ്ക്കുക • പുനരുപയോഗിക്കുക", stat2: "മരങ്ങൾ ആവാസവ്യവസ്ഥയെ സഹായിക്കുന്നു", stat3: "കല മാറ്റം വരുത്തുന്നു", stat4: "പ്രകൃതിക്ക് സ്നേഹം ആവശ്യമാണ്",
+    gamesTitle: "🎮 പാരിസ്ഥിതിക ഗെയിമുകൾ", gamesSub: "കളിച്ചുകൊണ്ട് പഠിക്കുക.",
+    ecoScore: "ഇക്കോ സ്കോർ", questionText: "ചോദ്യം", btnNext: "അടുത്ത ചോദ്യം →",
+    wasteTitle: "♻️ മാലിന്യ സംസ്കരണം", wRecycle: "♻️ റീസൈക്കിൾ", wOrganic: "🍎 ജൈവമാലിന്യം", wGeneral: "🗑️ സാധാരണ മാലിന്യം",
+    actTitle: "🌱 ഇക്കോ ചലഞ്ച്", a1Title: "ജലം സംരക്ഷിക്കുക", a1Desc: "വെള്ളം പാഴാക്കരുത്.", a2Title: "ഹരിത യാത്ര", a2Desc: "നടക്കുക അല്ലെങ്കിൽ ബസ് ഉപയോഗിക്കുക.", a3Title: "കല സൃഷ്ടിക്കുക", a3Desc: "പ്രകൃതിക്കായി കല സൃഷ്ടിക്കുക.", a4Title: "മരങ്ങൾ നടുക", a4Desc: "പ്രാദേശിക സസ്യങ്ങൾ വളർത്തുക.",
+    ctaTitle: "മാറ്റമാകുക 🌍", btnHelp: "ഞാൻ സഹായിക്കാം 🌿", btnIg: "📸 ഇൻസ്റ്റാഗ്രാമിൽ പിന്തുണയ്ക്കുക", btnWa: "💬 വാട്ട്‌സ്ആപ്പിൽ ചാറ്റ് ചെയ്യുക",
+    footer1: "🎨 നേച്ചേഴ്സ് പാലറ്റ് — ഇന്നത്തെ അവബോധം, നാളത്തെ ആരോഗ്യകരമായ ഭൂമി.", footer2: "അമൃത സർവകലാശാല വിദ്യാർത്ഥികളുടെ സംരംഭം.", madeBy: "നിർമ്മിച്ചത്:",
+    chatBtn: "🌿 ഫ്ലോറയോട് ചോദിക്കുക", chatSub: "● നേച്ചർ ഗൈഡ്", chatSend: "അയക്കുക", chip1: "🌳 കാടുകൾ", chip2: "💧 വെള്ളം", chip3: "♻️ 3Rs", chip4: "🐾 വന്യജീവികൾ",
+    greeting: "നമസ്കാരം! 🌸 ഞാൻ ഫ്ലോറ. പ്രകൃതിയെക്കുറിച്ച് എന്നോട് ചോദിക്കൂ!",
+    wQ: "{item} എവിടെ ഇടണം?", wC1: "ശരി! +5 പോയിന്റുകൾ", wC2: "വീണ്ടും ശ്രമിക്കുക!",
+    qC1: "ശരി! +10 പോയിന്റുകൾ", qC2: "അടുത്തത് ശ്രമിക്കുക!"
+  }
+};
+
+let currentLang = 'en';
+
+function changeLanguage(langCode) {
+  currentLang = langCode;
+  document.getElementById('entryLangSelect').value = langCode;
+  document.getElementById('navLangSelect').value = langCode;
+  
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(translations[langCode] && translations[langCode][key]) {
+      el.innerHTML = translations[langCode][key];
+    }
+  });
+
+  document.getElementById('floraInput').placeholder = (langCode==='en')?"Type a message...":translations[langCode].chatSend + "...";
+  loadQuiz(); 
+  updateWasteText();
+  document.getElementById('floraGreeting').innerHTML = translations[langCode].greeting;
+}
+
+// --- Cursor & Effects ---
+let lastTrailTime = 0;
+document.addEventListener('mousemove', (e) => {
+  if(Date.now() - lastTrailTime < 40) return; 
+  lastTrailTime = Date.now();
+  const trailEmojis = ['✨', '🍃', '🌸', '🦋', '🌱'];
+  const trail = document.createElement('div');
+  trail.className = 'cursor-trail';
+  trail.textContent = trailEmojis[Math.floor(Math.random() * trailEmojis.length)];
+  trail.style.left = (e.clientX + 5) + 'px';
+  trail.style.top = (e.clientY + 5) + 'px';
+  trail.style.animationDuration = (Math.random() * 0.4 + 0.6) + 's';
+  document.body.appendChild(trail);
+  setTimeout(() => trail.remove(), 1000);
+});
+
+function toggleEntryMode() {
+  isSignup = !isSignup;
+  const nameInput = document.getElementById('entryName');
+  const btn = document.getElementById('entrySubmitBtn');
+  const toggleText = document.getElementById('entryToggleText');
+
+  if(isSignup) {
+    nameInput.style.display = 'block'; nameInput.required = true;
+    btn.innerHTML = translations[currentLang].btnJoin || "Join World";
+    toggleText.innerHTML = translations[currentLang].loginToggle2 || "Already have an account? <u>Login</u>";
+  } else {
+    nameInput.style.display = 'none'; nameInput.required = false;
+    btn.innerHTML = translations[currentLang].btnEnter || "Enter World";
+    toggleText.innerHTML = translations[currentLang].loginToggle || "Don't have an account? <u>Sign up</u>";
+  }
+}
+
+function initScrollObserver() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('reveal-active'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-zoom').forEach(el => obs.observe(el));
+}
+
+// --- Quiz Logic ---
+const quizData = {
+  en: [{q:"Which action reduces plastic pollution?",a:["Using reusable bottles","More plastic bags"],c:0},{q:"Renewable energy source?",a:["Coal","Solar energy"],c:1},{q:"3Rs stand for?",a:["Reduce, Reuse, Recycle","Run, Rest, Repeat"],c:0}],
+  hi: [{q:"प्लास्टिक प्रदूषण कैसे कम करें?",a:["पुन: प्रयोज्य बोतल का उपयोग","अधिक प्लास्टिक बैग"],c:0},{q:"नवीकरणीय ऊर्जा स्रोत?",a:["कोयला","सौर ऊर्जा"],c:1},{q:"3R का अर्थ क्या है?",a:["कम करें, पुन: उपयोग करें, रीसायकल","दौड़ें, आराम करें"],c:0}],
+  te: [{q:"ప్లాస్టిక్ కాలుష్యాన్ని ఎలా తగ్గించాలి?",a:["పునర్వినియోగ బాటిల్ వాడకం","ఎక్కువ ప్లాస్టిక్ కవర్లు"],c:0},{q:"పునరుత్పాదక శక్తి?",a:["బొగ్గు","సౌర శక్తి"],c:1},{q:"3R అంటే?",a:["తగ్గించండి, వాడండి, రీసైకిల్","పరుగెత్తు, విశ్రాంతి"],c:0}],
+  ta: [{q:"பிளாஸ்டிக் மாசை குறைப்பது எப்படி?",a:["மறுபயன்பாட்டு பாட்டில்","அதிக பிளாஸ்டிக் பை"],c:0},{q:"புதுப்பிக்கத்தக்க ஆற்றல்?",a:["நிலக்கரி","சூரிய ஆற்றல்"],c:1},{q:"3R என்றால் என்ன?",a:["குறை, மறுபயன்பாடு, மறுசுழற்சி","ஓடு, ஓய்வெடு"],c:0}],
+  ml: [{q:"പ്ലാസ്റ്റിക് മലിനീകരണം എങ്ങനെ കുറയ്ക്കാം?",a:["പുനരുപയോഗിക്കാവുന്ന കുപ്പി","കൂടുതൽ പ്ലാസ്റ്റിക് കവറുകൾ"],c:0},{q:"പുനരുൽപ്പാദിപ്പിക്കാവുന്ന ഊർജ്ജം?",a:["കൽക്കരി","സൗരോർജ്ജം"],c:1},{q:"3R എന്നാൽ എന്ത്?",a:["കുറയ്ക്കുക, പുനരുപയോഗിക്കുക, റീസൈക്കിൾ","ഓടുക, വിശ്രമിക്കുക"],c:0}]
+};
+let qi=0, score=0;
+
+function updateScore(pts) { score += pts; document.getElementById('score').textContent = score; }
+
+function loadQuiz() {
+  const qSet = quizData[currentLang];
+  if(qi >= qSet.length) qi = 0;
+  document.getElementById('qnum').textContent = qi+1;
+  document.getElementById('quizQuestion').textContent = qSet[qi].q;
+  
+  const box = document.getElementById('choices'); box.innerHTML = '';
+  qSet[qi].a.forEach((x,i)=>{
+    const b = document.createElement('button'); b.className = 'choice'; b.textContent = x;
+    b.onclick = () => answerQuiz(i, qSet[qi].c); box.appendChild(b);
+  });
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function answerQuiz(selected, correct) {
+  document.querySelectorAll('#choices .choice').forEach(b => b.disabled = true);
+  const f = document.getElementById('feedback');
+  if(selected === correct){
+    updateScore(10); f.textContent = translations[currentLang].qC1;
+  } else {
+    f.textContent = translations[currentLang].qC2;
+  }
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+document.getElementById('nextBtn').onclick = () => {
+  qi++;
+  const len = quizData[currentLang].length;
+  if(qi < len) loadQuiz();
+  else {
+    document.getElementById('quizQuestion').textContent = '🎉 ' + translations[currentLang].navGames + ' Complete!';
+    document.getElementById('choices').innerHTML = `<button class="btn" onclick="qi=0;loadQuiz()">${translations[currentLang].btnPlay}</button>`;
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('nextBtn').style.display = 'none';
+  }
+};
+
+// --- Waste Sorting ---
+const wastes = {
+  en: [["an apple peel","organic","🍎"], ["a plastic bottle","recycle","🥤"]],
+  hi: [["सेब का छिलका","organic","🍎"], ["प्लास्टिक की बोतल","recycle","🥤"]],
+  te: [["ఆపిల్ తొక్క","organic","🍎"], ["ప్లాస్టిక్ బాటిల్","recycle","🥤"]],
+  ta: [["ஆப்பிள் தோல்","organic","🍎"], ["பிளாஸ்டிக் பாட்டில்","recycle","🥤"]],
+  ml: [["ആപ്പിൾ തൊലി","organic","🍎"], ["പ്ലാസ്റ്റിക് കുപ്പി","recycle","🥤"]]
+};
+let wi = 0;
+
+function updateWasteText() {
+  const item = wastes[currentLang][wi];
+  const qTemplate = translations[currentLang].wQ;
+  document.getElementById('wasteText').textContent = qTemplate.replace("{item}", item[2] + " " + item[0]);
+}
+
+function sortWaste(ans){
+ const item = wastes[currentLang][wi];
+ const f = document.getElementById('wasteFeedback');
+ if(ans === item[1]){
+   updateScore(5);
+   f.textContent = translations[currentLang].wC1;
+   wi = (wi+1) % wastes[currentLang].length;
+   setTimeout(()=>{ updateWasteText(); f.textContent=''; }, 1000);
+ } else {
+   f.textContent = translations[currentLang].wC2;
+ }
+}
+
+function triggerAnimation() {
+  const btn = document.getElementById('helpBtn');
+  btn.textContent = "💚 Thank You!"; btn.classList.add('btn-success');
+  const emojis = ['🌿', '🌱', '🌍', '🎨', '💚'];
+  for(let i = 0; i < 30; i++) {
+    setTimeout(() => {
+      const p = document.createElement('div'); p.className = 'eco-particle';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.fontSize = (Math.random() * 20 + 15) + 'px';
+      p.style.animationDuration = (Math.random() * 2.5 + 2) + 's';
+      document.body.appendChild(p); setTimeout(() => p.remove(), 5000);
+    }, i * 60);
+  }
+}
+
+// --- Flora AI Chat ---
+const botAnswers = {
+  en: ["🌳 <b>Forests:</b> They host over 80% of wildlife and purify our air! Plant native trees.", "💧 <b>Water:</b> Save water by turning off running taps and taking shorter showers.", "♻️ <b>3Rs:</b> Reduce, Reuse, and Recycle! Avoid single-use plastic.", "🐾 <b>Wildlife:</b> Protect ecosystems by respecting boundaries and habitats."],
+  hi: ["🌳 <b>वन:</b> वे हमारी हवा को शुद्ध करते हैं! अधिक पेड़ लगाएं।", "💧 <b>पानी:</b> नल बंद करके और कम नहाकर पानी बचाएं।", "♻️ <b>3Rs:</b> कम करें, पुन: उपयोग करें और रीसायकल करें! प्लास्टिक से बचें।", "🐾 <b>वन्यजीव:</b> जानवरों के प्राकृतिक आवास का सम्मान करके उनकी रक्षा करें।"],
+  te: ["🌳 <b>అడవులు:</b> అవి గాలిని శుభ్రపరుస్తాయి! చెట్లు నాటండి.", "💧 <b>నీరు:</b> ట్యాప్‌లు కట్టేయడం ద్వారా నీటిని ఆదా చేయండి.", "♻️ <b>3Rs:</b> తగ్గించండి, తిరిగి వాడండి, రీసైకిల్ చేయండి!", "🐾 <b>వన్యప్రాణులు:</b> సహజ ఆవాసాలను రక్షించండి."],
+  ta: ["🌳 <b>காடுகள்:</b> அவை காற்றை சுத்தப்படுத்துகின்றன! மரம் வளர்ப்போம்.", "💧 <b>நீர்:</b> தண்ணீரை வீணாக்காமல் பாதுகாப்போம்.", "♻️ <b>3Rs:</b> பிளாஸ்டிக்கை குறைத்து மறுசுழற்சி செய்வோம்.", "🐾 <b>வனவிலங்குகள்:</b> விலங்குகளின் வாழ்விடங்களை பாதுகாப்போம்."],
+  ml: ["🌳 <b>കാടുകൾ:</b> കാടുകൾ വായു ശുദ്ധീകരിക്കുന്നു! മരങ്ങൾ നടുക.", "💧 <b>വെള്ളം:</b> വെള്ളം പാഴാക്കാതിരിക്കുക.", "♻️ <b>3Rs:</b> പ്ലാസ്റ്റിക് കുറയ്ക്കുക, പുനരുപയോഗിക്കുക.", "🐾 <b>വന്യജീവികൾ:</b> മൃഗങ്ങളെയും പ്രകൃതിയെയും സംരക്ഷിക്കുക."]
+};
+
+function toggleFloraChat() {
+  const win = document.getElementById('flora-chat-window');
+  win.classList.toggle('open');
+  if(win.classList.contains('open')) document.getElementById('floraInput').focus();
+}
+
+function quickAsk(index) {
+  appendChatMsg("...", 'user-msg');
+  setTimeout(() => {
+    document.getElementById('floraChatMessages').lastChild.remove();
+    appendChatMsg(botAnswers[currentLang][index], 'bot-msg');
+  }, 300);
+}
+
+function handleFloraSubmit(e) {
+  if(e) e.preventDefault();
+  const input = document.getElementById('floraInput');
+  const userText = input.value.trim();
+  if(!userText) return;
+
+  appendChatMsg(userText, 'user-msg');
+  input.value = '';
+
+  setTimeout(() => {
+    const reply = generateFloraAnswer(userText.toLowerCase());
+    appendChatMsg(reply, 'bot-msg');
+  }, 400);
+}
+
+function generateFloraAnswer(q) {
+  if (q.includes('forest') || q.includes('tree')) return botAnswers[currentLang][0];
+  if (q.includes('water') || q.includes('ocean')) return botAnswers[currentLang][1];
+  if (q.includes('recycle') || q.includes('waste') || q.includes('plastic')) return botAnswers[currentLang][2];
+  if (q.includes('animal') || q.includes('wildlife') || q.includes('bird')) return botAnswers[currentLang][3];
+  
+  if (currentLang === 'hi') return "🌱 यह बहुत अच्छा सवाल है! प्रकृति की रक्षा छोटे-छोटे कदमों से शुरू होती है।";
+  if (currentLang === 'ta') return "🌱 இது ஒரு நல்ல கேள்வி! இயற்கையை காப்பது சிறு செயல்களில்தான் உள்ளது.";
+  if (currentLang === 'te') return "🌱 ఇది మంచి ప్రశ్న! పర్యావరణాన్ని రక్షించడం మన అందరి బాధ్యత.";
+  if (currentLang === 'ml') return "🌱 നല്ല ചോദ്യം! പ്രകൃതിയെ സംരക്ഷിക്കുന്നത് ഒരു ചെറിയ ചുവടുവെപ്പിലൂടെയാണ്.";
+  return "🌱 That is a great question! Protecting nature begins with small everyday steps like saving energy and reducing plastic.";
+}
+
+function appendChatMsg(text, className) {
+  const box = document.getElementById('floraChatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-bubble ' + className;
+  div.innerHTML = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+// =========================================
+// Admin Dashboard Charts Initialization
+// =========================================
+let trafficChartObj = null;
+let sourceChartObj = null;
+
+const chartDataSets = {
+  daily: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data: [42, 58, 65, 80, 54, 72, 57] },
+  weekly: { labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], data: [98, 115, 105, 110] },
+  monthly: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], data: [310, 340, 390, 428, 410, 450] }
+};
+
+function initAdminAnalytics() {
+  if (trafficChartObj) return;
+
+  const ctxTraffic = document.getElementById('trafficChart').getContext('2d');
+  trafficChartObj = new Chart(ctxTraffic, {
+    type: 'line',
+    data: {
+      labels: chartDataSets.daily.labels,
+      datasets: [{
+        label: 'Visitors',
+        data: chartDataSets.daily.data,
+        borderColor: '#b7f36b',
+        backgroundColor: 'rgba(183, 243, 107, 0.12)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#133e2d' }, ticks: { color: '#a2d2b8' } },
+        y: { grid: { color: '#133e2d' }, ticks: { color: '#a2d2b8' } }
+      }
+    }
+  });
+
+  const ctxSource = document.getElementById('sourceChart').getContext('2d');
+  sourceChartObj = new Chart(ctxSource, {
+    type: 'doughnut',
+    data: {
+      labels: ['Instagram / Socials (60%)', 'WhatsApp Invites (25%)', 'Community Referrals (15%)'],
+      datasets: [{
+        data: [257, 107, 64],
+        backgroundColor: ['#25D366', '#b7f36b', '#39a9db'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#e2f5eb', font: { size: 11 } } }
+      }
+    }
+  });
+
+  setInterval(() => {
+    const delta = Math.floor(Math.random() * 5) - 2;
+    const liveEl = document.getElementById('admLiveUsers');
+    if (liveEl) {
+      let currentVal = parseInt(liveEl.textContent) || 18;
+      currentVal = Math.max(10, Math.min(35, currentVal + delta));
+      liveEl.textContent = currentVal;
+    }
+  }, 4000);
+}
+
+function updateTrafficFilter(type) {
+  document.querySelectorAll('.time-btn-group button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (trafficChartObj) {
+    trafficChartObj.data.labels = chartDataSets[type].labels;
+    trafficChartObj.data.datasets[0].data = chartDataSets[type].data;
+    trafficChartObj.update();
+  }
+}
+
+// Initialize System
+changeLanguage('en'); 
+</script>
+</body>
+</html>
